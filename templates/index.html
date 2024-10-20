@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}OrbitPay - Conócenos{% endblock %}</title>
+    {% load static %}
+    {% load crispy_forms_tags %}
+    <!-- Enlaces CSS -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <!-- Bootstrap CSS (CDN) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    {% block extra_head %}
+    <!-- Bloque para estilos o scripts adicionales en el head -->
+    {% endblock %}
+    <style>
+        /* Estilos personalizados para coincidir con los colores de la imagen */
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar-light .navbar-brand, .nav-link, h2, p {
+            color: #1a73e8;
+        }
+        .navbar-light .navbar-nav .nav-link.active, .navbar-light .navbar-nav .nav-link:hover {
+            color: #0047ab;
+        }
+        .btn-primary {
+            background-color: #1a73e8;
+            border-color: #1a73e8;
+        }
+        .btn-primary:hover {
+            background-color: #0047ab;
+            border-color: #0047ab;
+        }
+        footer {
+            background-color: #f1f3f4;
+        }
+        .footer .text-muted {
+            color: #1a73e8;
+        }
+        .card-title {
+            color: #1a73e8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="">soluticket</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" 
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item{% if request.path == '/' %} active{% endif %}">
+                    <a class="nav-link" href="">Inicio</a>
+                </li>
+                <li class="nav-item{% if request.path == '/conocenos' %} active{% endif %}">
+                    <a class="nav-link" href="#">Conócenos</a>
+                </li>
+                <li class="nav-item{% if request.path == '/quienes-somos' %} active{% endif %}">
+                    <a class="nav-link" href="#">Quiénes Somos</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_logout' %}">Cerrar Sesión</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_login' %}">Iniciar Sesión</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_signup' %}">Registrarse</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container mt-4">
+        <!-- Sección Conócenos -->
+        <section id="conocenos" class="my-5">
+            <h2>Conócenos</h2>
+            <p>
+                Soluticket, nos especializamos en brindar soluciones eficientes de Helpdesk para mejorar la gestión de tickets y la atención al cliente. Nuestro equipo de expertos se dedica a ofrecer un servicio de soporte técnico rápido y eficaz, ayudando a las empresas a resolver incidentes con mayor agilidad y eficiencia. Nos comprometemos a optimizar la experiencia del usuario, asegurando que cada solicitud sea atendida con la máxima prioridad.
+            </p>
+        </section>
+
+        <!-- Sección Quiénes Somos -->
+        <section id="quienes-somos" class="my-5">
+            <h2>Quiénes Somos</h2>
+            <p>
+                Soluticket es una empresa especializada en soluciones de gestión de tickets y Helpdesk, con una sólida trayectoria en el sector. Nuestra misión es simplificar y agilizar el proceso de atención al cliente, proporcionando herramientas eficientes para que las empresas puedan gestionar solicitudes y resolver incidencias de manera rápida y efectiva. Nos esforzamos por ofrecer un servicio accesible, confiable y adaptado a las necesidades de nuestros usuarios.
+            </p>
+        </section>
+
+        <!-- Tarjetas con imágenes -->
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{% static 'img/team1.jpg' %}" class="card-img-top" alt="Equipo 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Nuestro Equipo</h5>
+                        <p class="card-text">Conoce a los profesionales detrás de Soluticket.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{% static 'img/team2.jpg' %}" class="card-img-top" alt="Equipo 2">
+                    <div class="card-body">
+                        <h5 class="card-title">Nuestros Valores</h5>
+                        <p class="card-text">Nos guiamos por la integridad y la innovación.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{% static 'img/team3.jpg' %}" class="card-img-top" alt="Equipo 3">
+                    <div class="card-body">
+                        <h5 class="card-title">Nuestra Misión</h5>
+                        <p class="card-text">Transformar de resolver tus problemas de forma agil.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de página -->
+    <footer class="footer bg-light py-3 mt-auto">
+        <div class="container text-center">
+            <span class="text-muted">© 2023 OrbitPay. Todos los derechos reservados.</span>
+        </div>
+    </footer>
+
+    <!-- Scripts JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-..."></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_scripts %}
+    <!-- Bloque para scripts adicionales -->
+    {% endblock %}
+</body>
+</html>
