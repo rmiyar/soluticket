@@ -14,7 +14,7 @@
     <!-- Bloque para estilos o scripts adicionales en el head -->
     {% endblock %}
     <style>
-        /* Estilos personalizados para coincidir con los colores de la imagen */
+        /* Estilos personalizados */
         body {
             background-color: #f8f9fa;
         }
@@ -41,20 +41,28 @@
         .card-title {
             color: #1a73e8;
         }
+        /* Estilos de contenedores sombreados */
+        .shadowed-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <!-- Barra de navegación -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="">soluticket</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" 
+        <a class="navbar-brand" href="/">Soluticket</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item{% if request.path == '/' %} active{% endif %}">
-                    <a class="nav-link" href="">Inicio</a>
+                    <a class="nav-link" href="/">Inicio</a>
                 </li>
                 <li class="nav-item{% if request.path == '/conocenos' %} active{% endif %}">
                     <a class="nav-link" href="#">Conócenos</a>
@@ -63,7 +71,7 @@
                     <a class="nav-link" href="#">Quiénes Somos</a>
                 </li>
             </ul>
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'account_logout' %}">Cerrar Sesión</a>
@@ -83,20 +91,24 @@
     <!-- Contenido principal -->
     <div class="container mt-4">
         <!-- Sección Conócenos -->
-        <section id="conocenos" class="my-5">
-            <h2>Conócenos</h2>
-            <p>
-                Soluticket, nos especializamos en brindar soluciones eficientes de Helpdesk para mejorar la gestión de tickets y la atención al cliente. Nuestro equipo de expertos se dedica a ofrecer un servicio de soporte técnico rápido y eficaz, ayudando a las empresas a resolver incidentes con mayor agilidad y eficiencia. Nos comprometemos a optimizar la experiencia del usuario, asegurando que cada solicitud sea atendida con la máxima prioridad.
-            </p>
-        </section>
+        <div class="shadowed-container my-5">
+            <section id="conocenos">
+                <h2>Conócenos</h2>
+                <p>
+                    Soluticket, nos especializamos en brindar soluciones eficientes de Helpdesk para mejorar la gestión de tickets y la atención al cliente. Nuestro equipo de expertos se dedica a ofrecer un servicio de soporte técnico rápido y eficaz, ayudando a las empresas a resolver incidentes con mayor agilidad y eficiencia. Nos comprometemos a optimizar la experiencia del usuario, asegurando que cada solicitud sea atendida con la máxima prioridad.
+                </p>
+            </section>
+        </div>
 
         <!-- Sección Quiénes Somos -->
-        <section id="quienes-somos" class="my-5">
-            <h2>Quiénes Somos</h2>
-            <p>
-                Soluticket es una empresa especializada en soluciones de gestión de tickets y Helpdesk, con una sólida trayectoria en el sector. Nuestra misión es simplificar y agilizar el proceso de atención al cliente, proporcionando herramientas eficientes para que las empresas puedan gestionar solicitudes y resolver incidencias de manera rápida y efectiva. Nos esforzamos por ofrecer un servicio accesible, confiable y adaptado a las necesidades de nuestros usuarios.
-            </p>
-        </section>
+        <div class="shadowed-container my-5">
+            <section id="quienes-somos">
+                <h2>Quiénes Somos</h2>
+                <p>
+                    Soluticket es una empresa especializada en soluciones de gestión de tickets y Helpdesk, con una sólida trayectoria en el sector. Nuestra misión es simplificar y agilizar el proceso de atención al cliente, proporcionando herramientas eficientes para que las empresas puedan gestionar solicitudes y resolver incidencias de manera rápida y efectiva. Nos esforzamos por ofrecer un servicio accesible, confiable y adaptado a las necesidades de nuestros usuarios.
+                </p>
+            </section>
+        </div>
 
         <!-- Tarjetas con imágenes -->
         <div class="row">
@@ -120,10 +132,10 @@
             </div>
             <div class="col-md-4">
                 <div class="card">
-                    <img src="{% static 'img/team3.jpg' %}" class="card-img-top" alt="Equipo 3">
+                    <img src="{% static 'img/mision.jpg' %}" class="card-img-top" alt="Misión">
                     <div class="card-body">
                         <h5 class="card-title">Nuestra Misión</h5>
-                        <p class="card-text">Transformar de resolver tus problemas de forma agil.</p>
+                        <p class="card-text">Transformar y resolver tus problemas de forma ágil.</p>
                     </div>
                 </div>
             </div>
@@ -133,12 +145,12 @@
     <!-- Pie de página -->
     <footer class="footer bg-light py-3 mt-auto">
         <div class="container text-center">
-            <span class="text-muted">© 2023 OrbitPay. Todos los derechos reservados.</span>
+            <span class="text-muted">© 2023 Soluticket. Todos los derechos reservados.</span>
         </div>
     </footer>
 
     <!-- Scripts JS -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-..."></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_scripts %}
     <!-- Bloque para scripts adicionales -->

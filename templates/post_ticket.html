@@ -1,0 +1,203 @@
+{% extends "base.html" %}  <!-- Asegúrate de que el nombre del archivo base sea "base.html" o cámbialo al nombre correspondiente -->
+
+{% block title %}Tipos de Tickets - Soluticket{% endblock %}
+
+{% block extra_head %}
+<style>
+    .shadowed-container {
+        background-color: #ffffff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    .card-title {
+        color: #1a73e8;
+    }
+
+    .card-text {
+        color: #555;
+    }
+
+    .ticket-options {
+        display: none;
+    }
+
+    .ticket-options.active {
+        display: block;
+    }
+
+    .create-ticket-btn {
+        background-color: #1a73e8;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 16px;
+        margin-top: 10px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .create-ticket-btn:hover {
+        background-color: #0047ab;
+        color: #fff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ticket-container">
+    <h2>Seleccione una Categoría de Ticket</h2>
+    <div class="d-flex justify-content-center my-4">
+        <button class="btn btn-primary mx-2" onclick="showOptions('software')">Software</button>
+        <button class="btn btn-primary mx-2" onclick="showOptions('hardware')">Hardware</button>
+    </div>
+
+    <!-- Opciones de tickets para Software -->
+    <div id="software-options" class="ticket-options shadowed-container">
+        <h3>Tipos de Tickets - Software</h3>
+        <div class="row">
+            <div class="col-md-6 col-lg-4 my-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Instalación de Software</h5>
+                        <p class="card-text">Asistencia para instalar nuevos programas en su sistema.</p>
+                        <button class="create-ticket-btn" onclick="openFormModal('Instalación de Software')">Crear Ticket</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 my-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Actualización de Software</h5>
+                        <p class="card-text">Ayuda con actualizaciones de software y sistemas.</p>
+                        <button class="create-ticket-btn" onclick="openFormModal('Actualización de Software')">Crear Ticket</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 my-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Resolución de Errores</h5>
+                        <p class="card-text">Solución de errores y problemas técnicos de software.</p>
+                        <button class="create-ticket-btn" onclick="openFormModal('Resolución de Errores')">Crear Ticket</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 my-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Problemas de Conectividad</h5>
+                        <p class="card-text">Solución a problemas de conexión y acceso a redes.</p>
+                        <button class="create-ticket-btn" onclick="openFormModal('Problemas de Conectividad')">Crear Ticket</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Opciones de tickets para Hardware -->
+    <div id="hardware-options" class="ticket-options shadowed-container">
+        <h3>Tipos de Tickets - Hardware</h3>
+        <div class="row">
+            <div class="col-md-6 col-lg-4 my-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Reparación de Computadora</h5>
+                        <p class="card-text">Diagnóstico y reparación de equipos de cómputo.</p>
+                        <button class="create-ticket-btn" onclick="openFormModal('Reparación de Computadora')">Crear Ticket</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 my-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Mantenimiento de Equipos</h5>
+                        <p class="card-text">Mantenimiento preventivo y correctivo de hardware.</p>
+                        <button class="create-ticket-btn" onclick="openFormModal('Mantenimiento de Equipos')">Crear Ticket</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 my-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Reemplazo de Partes</h5>
+                        <p class="card-text">Sustitución de componentes defectuosos o desgastados.</p>
+                        <button class="create-ticket-btn" onclick="openFormModal('Reemplazo de Partes')">Crear Ticket</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 my-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Configuración de Impresoras</h5>
+                        <p class="card-text">Instalación y configuración de impresoras en red.</p>
+                        <button class="create-ticket-btn" onclick="openFormModal('Configuración de Impresoras')">Crear Ticket</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal del Formulario -->
+<div class="modal fade" id="ticketFormModal" tabindex="-1" aria-labelledby="ticketFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ticketFormModalLabel">Crear Ticket - <span id="ticketType"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="solicitante" class="form-label">Nombre del Solicitante</label>
+                        <input type="text" class="form-control" id="solicitante" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="criticidad" class="form-label">Nivel de Criticidad</label>
+                        <select class="form-select" id="criticidad" required>
+                            <option value="bajo">Bajo</option>
+                            <option value="medio">Medio</option>
+                            <option value="alto">Alto</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Enviar Ticket</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function showOptions(category) {
+        document.getElementById('software-options').classList.remove('active');
+        document.getElementById('hardware-options').classList.remove('active');
+        
+        if (category === 'software') {
+            document.getElementById('software-options').classList.add('active');
+        } else if (category === 'hardware') {
+            document.getElementById('hardware-options').classList.add('active');
+        }
+    }
+
+    function openFormModal(ticketType) {
+        document.getElementById('ticketType').textContent = ticketType;
+        var modal = new bootstrap.Modal(document.getElementById('ticketFormModal'));
+        modal.show();
+    }
+</script>
+{% endblock %}
