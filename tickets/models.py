@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings 
+from users.models import User
 
 
 
@@ -42,6 +43,7 @@ class Ticket(models.Model):
     prioridad = models.ForeignKey('Priority', on_delete=models.SET_NULL, null=True, related_name="tickets", verbose_name="Prioridad")
     estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='abierto', verbose_name="Estado")
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
+    asignado_a = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"{self.nombre_solicitante} - {self.prioridad} - {self.estado}"
