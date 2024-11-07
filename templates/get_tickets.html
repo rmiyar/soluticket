@@ -6,32 +6,50 @@
 <div class="container my-4 p-4" style="background-color: #f7faff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
     <h2 class="text-center text-primary mb-4">Lista de Tickets</h2>
 
-    <!-- Filtros de búsqueda -->
-    <form method="get" class="form-inline mb-3">
-        <div class="form-group mr-3">
-            <label for="filtro_prioridad" class="mr-2">Prioridad:</label>
-            <select name="filtro_prioridad" id="filtro_prioridad" class="form-control">
-                <option value="">Todas</option>
-                <option value="alta" {% if filtro_prioridad == "alta" %}selected{% endif %}>Alta</option>
-                <option value="media" {% if filtro_prioridad == "media" %}selected{% endif %}>Media</option>
-                <option value="baja" {% if filtro_prioridad == "baja" %}selected{% endif %}>Baja</option>
-            </select>
+    <!-- Formulario de filtros -->
+    <form method="get" class="mb-4">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="tipo_servicio" class="form-label">Tipo de Servicio</label>
+                <select name="tipo_servicio" id="tipo_servicio" class="form-control">
+                    <option value="">Todos</option>
+                    <option value="servicio1" {% if tipo_servicio == "servicio1" %}selected{% endif %}>Servicio 1</option>
+                    <option value="servicio2" {% if tipo_servicio == "servicio2" %}selected{% endif %}>Servicio 2</option>
+                    <!-- Agrega más opciones de servicio según sea necesario -->
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="prioridad" class="form-label">Prioridad</label>
+                <select name="prioridad" id="prioridad" class="form-control">
+                    <option value="">Todas</option>
+                    <option value="alta" {% if prioridad == "alta" %}selected{% endif %}>Alta</option>
+                    <option value="media" {% if prioridad == "media" %}selected{% endif %}>Media</option>
+                    <option value="baja" {% if prioridad == "baja" %}selected{% endif %}>Baja</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="estado" class="form-label">Estado</label>
+                <select name="estado" id="estado" class="form-control">
+                    <option value="">Todos</option>
+                    <option value="abierto" {% if estado == "abierto" %}selected{% endif %}>Abierto</option>
+                    <option value="en_proceso" {% if estado == "en_proceso" %}selected{% endif %}>En Proceso</option>
+                    <option value="cerrado" {% if estado == "cerrado" %}selected{% endif %}>Cerrado</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="asignado_a" class="form-label">Asignado a</label>
+                <input type="text" name="asignado_a" id="asignado_a" class="form-control" placeholder="Usuario" value="{{ asignado_a }}">
+            </div>
         </div>
-
-        <div class="form-group mr-3">
-            <label for="filtro_estado" class="mr-2">Estado:</label>
-            <select name="filtro_estado" id="filtro_estado" class="form-control">
-                <option value="">Todos</option>
-                <option value="abierto" {% if filtro_estado == "abierto" %}selected{% endif %}>Abierto</option>
-                <option value="en_proceso" {% if filtro_estado == "en_proceso" %}selected{% endif %}>En Proceso</option>
-                <option value="cerrado" {% if filtro_estado == "cerrado" %}selected{% endif %}>Cerrado</option>
-            </select>
+        <div class="row mt-3">
+            <div class="col-md-12 text-center">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                <a href="{% url 'consultar_tickets' %}" class="btn btn-secondary">Restablecer Filtros</a>
+            </div>
         </div>
-
-        <button type="submit" class="btn btn-primary mr-2">Filtrar</button>
-        <a href="{% url 'consultar_tickets' %}" class="btn btn-secondary">Restablecer Filtros</a>
     </form>
 
+    <!-- Tabla de tickets -->
     <table class="table table-hover">
         <thead style="background-color: #007bff; color: white;">
             <tr>
@@ -39,6 +57,7 @@
                 <th>Servicio</th>
                 <th>Prioridad</th>
                 <th>Estado</th>
+                <th>Asignado a</th>
                 <th>Fecha de Creación</th>
                 <th>Acción</th>
             </tr>
@@ -50,25 +69,74 @@
                 <td>{{ ticket.servicio }}</td>
                 <td>{{ ticket.prioridad }}</td>
                 <td>
-                    <span class="badge {% if ticket.estado == 'abierto' %}badge-danger{% elif ticket.estado == 'en_proceso' %}badge-warning{% else %}badge-success{% endif %}">
+                    <span class="badge" style="background-color: #007bff; color: white;">
                         {{ ticket.get_estado_display }}
                     </span>
                 </td>
+                <td>
+                    {% if ticket.asignado_a %}
+                        {{ ticket.asignado_a.get_full_name|default:ticket.asignado_a.username }}
+                    {% else %}
+                        <span class="text-muted">Sin asignar</span>
+                    {% endif %}
+                </td>
                 <td>{{ ticket.fecha_creacion|date:"d/m/Y H:i" }}</td>
                 <td>
-                    <!-- Botón para tomar el ticket -->
-                    <form action="{% url 'tomar_ticket' ticket.id %}" method="post" style="display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary btn-sm">Tomar Ticket</button>
-                    </form>
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal" data-ticket-id="{{ ticket.id }}">
+                        Tomar Ticket
+                    </button>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="6" class="text-center text-muted">No hay tickets disponibles.</td>
+                <td colspan="7" class="text-center text-muted">No hay tickets disponibles.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<!-- Modal de confirmación -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas tomar este ticket?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmAcceptButton">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Formulario oculto para enviar la solicitud de toma de ticket -->
+<form id="takeTicketForm" action="" method="post" style="display: none;">
+    {% csrf_token %}
+</form>
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var confirmModal = document.getElementById('confirmModal');
+        var confirmAcceptButton = document.getElementById('confirmAcceptButton');
+        var takeTicketForm = document.getElementById('takeTicketForm');
+
+        confirmModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var ticketId = button.getAttribute('data-ticket-id');
+            takeTicketForm.action = `{% url 'tomar_ticket' 0 %}`.replace('/0/', `/${ticketId}/`);
+        });
+
+        confirmAcceptButton.addEventListener('click', function () {
+            takeTicketForm.submit();
+        });
+    });
+</script>
+{% endblock %}
 {% endblock %}

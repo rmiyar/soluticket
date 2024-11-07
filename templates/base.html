@@ -52,6 +52,18 @@
         {% endblock %}
     </div>
 
+    <!-- Mensajes de alerta -->
+    {% if messages %}
+    <div class="container mt-3" id="messageContainer">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <!-- Pie de página -->
     <footer class="footer bg-light py-3 mt-auto">
         <div class="container text-center">
@@ -66,17 +78,23 @@
     {% block extra_scripts %}
     <!-- Bloque para scripts adicionales -->
     {% endblock %}
-    {% if messages %}
-<div class="container mt-3">
-    {% for message in messages %}
-    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}" role="alert">
-        {{ message }}
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
+    
+    <!-- Script para ocultar mensajes automáticamente después de 3 segundos -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Ocultar el mensaje después de 3 segundos (3000 ms)
+            setTimeout(function () {
+                var messageContainer = document.getElementById('messageContainer');
+                if (messageContainer) {
+                    messageContainer.style.transition = "opacity 0.5s";
+                    messageContainer.style.opacity = "0";
+                    setTimeout(function() {
+                        messageContainer.remove();  // Elimina el elemento del DOM
+                    }, 500);  // Espera a que termine la transición antes de eliminar
+                }
+            }, 5000);
+        });
+    </script>
 
 </body>
 </html>
-
-
