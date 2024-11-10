@@ -5,6 +5,9 @@ from django.contrib import messages
 from .models import Ticket
 from users.models import User
 from django.shortcuts import render
+from .forms import TicketForm,CommentForm
+from django.urls import reverse
+from django.http import HttpResponse
 
 
 def consultar_tickets(request):
@@ -60,3 +63,60 @@ def tomar_ticket(request, ticket_id):
 
     tickets = Ticket.objects.all()
     return render(request, 'get_tickets.html', {'tickets': tickets})
+
+
+@login_required
+def agente_dashboard(request):
+    agente = request.user
+    tickets_asignados = Ticket.objects.filter(asignado_a=agente)
+    
+    # Filtrar tickets por estado
+    abiertos = tickets_asignados.filter(estado="abierto")
+    en_proceso = tickets_asignados.filter(estado="en_proceso")
+    cerrados = tickets_asignados.filter(estado="cerrado")
+    
+    # Instancias de los formularios para el estado y el comentario
+    ticket_form = TicketForm()  # Formulario para el campo de estado
+    comment_form = CommentForm()  # Formulario para agregar un comentario
+
+    context = {
+        "total_tickets": tickets_asignados.count(),
+        "abiertos": abiertos,
+        "en_proceso": en_proceso,
+        "cerrados": cerrados,
+        "tickets_asignados": tickets_asignados,
+        "ticket_form": ticket_form,
+        "comment_form": comment_form,
+    }
+    
+    return render(request, "agente_dashboard.html", context)
+
+
+@login_required
+def editar_ticket(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id, asignado_a=request.user)
+    
+    if request.method == "POST":
+        ticket_form = TicketForm(request.POST, instance=ticket)
+        comment_form = CommentForm(request.POST)
+        
+        if ticket_form.is_valid():
+            ticket_form.save()
+            
+            if comment_form.is_valid():
+                comment = comment_form.save(commit=False)
+                comment.ticket = ticket
+                comment.user = request.user
+                comment.save()
+            
+            return redirect(reverse("agente_dashboard"))
+    else:
+        ticket_form = TicketForm(instance=ticket)
+        comment_form = CommentForm()
+    
+    # Asegúrate de pasar los formularios en el contexto para cada modal
+    return render(request, "agente_dashboard.html", {
+        "ticket_form": ticket_form,
+        "comment_form": comment_form,
+        "tickets_asignados": Ticket.objects.filter(asignado_a=request.user),
+    })

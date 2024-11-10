@@ -2,8 +2,6 @@ from django.db import models
 from django.conf import settings 
 from users.models import User
 
-
-
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="Nombre de la Categoría")
     description = models.TextField(blank=True, null=True, verbose_name="Descripción de la Categoría")
@@ -19,17 +17,12 @@ class Type(models.Model):
     def __str__(self):
         return self.name
 
-    def __str__(self):
-        return self.name
-
-
 class Priority(models.Model):
     level = models.CharField(max_length=50, verbose_name="Nivel de Prioridad")
     description = models.TextField(blank=True, null=True, verbose_name="Descripción de la Prioridad")
 
     def __str__(self):
         return f"{self.level} - {self.description}"
-
 
 class Ticket(models.Model):
     ESTADO_CHOICES = [
@@ -39,7 +32,7 @@ class Ticket(models.Model):
     ]
 
     nombre_solicitante = models.CharField(max_length=100, verbose_name="Nombre del Solicitante")
-    servicio = models.ForeignKey('type', on_delete=models.SET_NULL, null=True, related_name="tickets", verbose_name="servicio")
+    servicio = models.ForeignKey('Type', on_delete=models.SET_NULL, null=True, related_name="tickets", verbose_name="Servicio")  # Cambio de 'type' a 'Type'
     prioridad = models.ForeignKey('Priority', on_delete=models.SET_NULL, null=True, related_name="tickets", verbose_name="Prioridad")
     estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='abierto', verbose_name="Estado")
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
@@ -47,7 +40,6 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"{self.nombre_solicitante} - {self.prioridad} - {self.estado}"
-
 
 class Comment(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="comments", verbose_name="Ticket")

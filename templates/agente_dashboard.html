@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard de Agente{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Dashboard de Agente</h1>
+    <div class="row">
+        <!-- Total Tickets -->
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total de Tickets Asignados</h5>
+                    <p class="card-text display-4">{{ total_tickets }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tickets Abiertos -->
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Tickets Abiertos</h5>
+                    <p class="card-text display-4">{{ abiertos.count }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tickets en Proceso -->
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Tickets en Proceso</h5>
+                    <p class="card-text display-4">{{ en_proceso.count }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tickets Cerrados -->
+        <div class="col-md-4 mt-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Tickets Cerrados</h5>
+                    <p class="card-text display-4">{{ cerrados.count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nueva Sección: Gestión de Ticket -->
+    <div class="mt-5">
+        <h2 class="text-center text-primary mb-4">Gestión de Ticket</h2>
+        <table class="table table-striped">
+            <thead class="table-primary">
+                <tr>
+                    <th>Nombre del Solicitante</th>
+                    <th>Servicio</th>
+                    <th>Prioridad</th>
+                    <th>Estado</th>
+                    <th>Fecha de Creación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets_asignados %}
+                <tr>
+                    <td>{{ ticket.nombre_solicitante }}</td>
+                    <td>{{ ticket.servicio }}</td>
+                    <td>{{ ticket.prioridad }}</td>
+                    <td>
+                        <span class="badge {% if ticket.estado == 'abierto' %}bg-warning{% elif ticket.estado == 'en_proceso' %}bg-info{% elif ticket.estado == 'cerrado' %}bg-success{% endif %}">
+                            {{ ticket.get_estado_display }}
+                        </span>
+                    </td>
+                    <td>{{ ticket.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        {% if ticket.estado == 'cerrado' %}
+                            <button class="btn btn-secondary btn-sm" disabled>Editar (Ticket Cerrado)</button>
+                        {% else %}
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#ticketModal{{ ticket.id }}">
+                                Editar
+                            </button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted">No tienes tickets asignados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modales para Editar Tickets -->
+    {% for ticket in tickets_asignados %}
+    <div class="modal fade" id="ticketModal{{ ticket.id }}" tabindex="-1" aria-labelledby="ticketModalLabel{{ ticket.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <!-- Encabezado del Modal -->
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="ticketModalLabel{{ ticket.id }}">
+                        <i class="bi bi-pencil-square me-2"></i>Editar Ticket: {{ ticket.nombre_solicitante }}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <!-- Cuerpo del Modal -->
+                <div class="modal-body">
+                    <form method="POST" action="{% url 'editar_ticket' ticket.id %}">
+                        {% csrf_token %}
+                        
+                        <!-- Formulario con Crispy Forms -->
+                        {{ ticket_form|crispy }}
+                        {{ comment_form|crispy }}
+                        
+                        <!-- Botones de Acción -->
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save me-1"></i>Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
