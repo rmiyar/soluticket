@@ -8,8 +8,9 @@ from django.shortcuts import render
 from .forms import TicketForm,CommentForm
 from django.urls import reverse
 from django.http import HttpResponse
+from utils.decorators import group_required
 
-
+@group_required('agente')
 def consultar_tickets(request):
     # Obtiene los valores de los filtros
     filtro_servicio = request.GET.get('tipo_servicio', '')
@@ -48,6 +49,7 @@ def consultar_tickets(request):
     return render(request, 'get_tickets.html', context)
 
 
+@group_required('agente')
 @login_required
 def tomar_ticket(request, ticket_id):
     print("Ticket ID:", ticket_id)  # Agrega esta línea para verificar el ID en la consola
@@ -65,6 +67,7 @@ def tomar_ticket(request, ticket_id):
     return render(request, 'get_tickets.html', {'tickets': tickets})
 
 
+@group_required('agente')
 @login_required
 def agente_dashboard(request):
     agente = request.user
@@ -91,7 +94,7 @@ def agente_dashboard(request):
     
     return render(request, "agente_dashboard.html", context)
 
-
+@group_required('agente')
 @login_required
 def editar_ticket(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id, asignado_a=request.user)

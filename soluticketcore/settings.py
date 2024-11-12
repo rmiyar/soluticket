@@ -159,3 +159,13 @@ CRISPY_TEMPLATE_PACK = 'bootstrap5'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 AUTH_USER_MODEL = 'users.User'
+
+
+# Redirige a los usuarios a 'crear_ticket/' después de iniciar sesión
+LOGIN_REDIRECT_URL = '/Tickets/crear_ticket/'
+
+# Redirige a los usuarios a 'crear_ticket/' después de registrarse
+ACCOUNT_SIGNUP_REDIRECT_URL = '/Tickets/crear_ticket/'
+
+# Opcionalmente, también puedes añadir la redirección al cerrar sesión
+LOGOUT_REDIRECT_URL = '/'
