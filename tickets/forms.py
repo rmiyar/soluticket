@@ -17,6 +17,24 @@ class TicketForm(forms.ModelForm):
         ]
 
 
+
+class CrearTicketForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ['nombre_solicitante', 'prioridad', 'descripcion']  # Excluir 'estado'
+        labels = {
+            'nombre_solicitante': 'Nombre del Solicitante',
+            'prioridad': 'Prioridad',
+            'descripcion': 'Descripción',
+        }
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.estado = 'abierto'  # Asignar el valor por defecto 'abierto'
+        if commit:
+            instance.save()
+        return instance
+
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment

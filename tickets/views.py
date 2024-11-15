@@ -5,7 +5,7 @@ from django.contrib import messages
 from .models import Ticket
 from users.models import User
 from django.shortcuts import render
-from .forms import TicketForm,CommentForm
+from .forms import TicketForm,CommentForm,CrearTicketForm
 from django.urls import reverse
 from django.http import HttpResponse
 from utils.decorators import group_required
@@ -123,3 +123,22 @@ def editar_ticket(request, ticket_id):
         "comment_form": comment_form,
         "tickets_asignados": Ticket.objects.filter(asignado_a=request.user),
     })
+
+
+
+
+@login_required
+@group_required('cliente')
+def crear_ticket(request):
+    if request.method == 'POST':
+        form = CrearTicketForm(request.POST)
+        if form.is_valid():
+            form.save()  # El método `save` asignará 'abierto' a `estado`
+            messages.success(request, "El ticket se creó correctamente.")
+            return redirect('crear_ticket')
+        else:
+            messages.error(request, "Por favor, corrige los errores del formulario.")
+    else:
+        form = CrearTicketForm()
+
+    return render(request, 'post_ticket.html', {'form': form})

@@ -33,6 +33,7 @@ class Ticket(models.Model):
 
     nombre_solicitante = models.CharField(max_length=100, verbose_name="Nombre del Solicitante")
     servicio = models.ForeignKey('Type', on_delete=models.SET_NULL, null=True, related_name="tickets", verbose_name="Servicio")  # Cambio de 'type' a 'Type'
+    descripcion = models.TextField(null=True, blank=True, verbose_name="Descripción del Ticket")
     prioridad = models.ForeignKey('Priority', on_delete=models.SET_NULL, null=True, related_name="tickets", verbose_name="Prioridad")
     estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='abierto', verbose_name="Estado")
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")

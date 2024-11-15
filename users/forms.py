@@ -15,8 +15,11 @@ class CustomUserCreationForm(UserCreationForm):
         fields = ('username', 'email', 'user_group')
 
     def save(self, commit=True):
+        # Guarda el usuario sin el grupo aún para asegurarse de que esté en la base de datos
         user = super().save(commit=False)
         if commit:
-            user.save()  # Guarda el usuario en la base de datos
-            user.groups.add(self.cleaned_data['user_group'])  # Agrega el grupo seleccionado
+            user.save()  # Guarda el usuario en la base de datos primero
+            # Asigna el grupo seleccionado
+            selected_group = self.cleaned_data['user_group']
+            user.groups.add(selected_group)  # Agrega el grupo seleccionado al usuario
         return user
