@@ -2,13 +2,14 @@ from django.shortcuts import render
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Ticket
-from users.models import User
+from .models import Ticket,Type, Category
 from django.shortcuts import render
 from .forms import TicketForm,CommentForm,CrearTicketForm
 from django.urls import reverse
 from django.http import HttpResponse
 from utils.decorators import group_required
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
 
 @group_required('agente')
 def consultar_tickets(request):
@@ -133,7 +134,13 @@ def crear_ticket(request):
     if request.method == 'POST':
         form = CrearTicketForm(request.POST)
         if form.is_valid():
-            form.save()  # El método `save` asignará 'abierto' a `estado`
+            tipo_name = request.POST.get('tipo_ticket')  # Obtener el nombre del tipo desde el formulario
+            tipo = get_object_or_404(Type, name=tipo_name)  # Buscar el objeto Type correspondiente
+            
+            ticket = form.save(commit=False)  # No guardar todavía
+            ticket.servicio = tipo  # Asignar el objeto Type al campo 'servicio'
+            ticket.save()  # Guardar el ticket con el tipo asignado
+            
             messages.success(request, "El ticket se creó correctamente.")
             return redirect('crear_ticket')
         else:
@@ -141,4 +148,30 @@ def crear_ticket(request):
     else:
         form = CrearTicketForm()
 
-    return render(request, 'post_ticket.html', {'form': form})
+    # Obtener los tipos de ticket por categoría
+    tipos_software = Type.objects.filter(category__name="Software")
+    tipos_hardware = Type.objects.filter(category__name="Hardware")
+
+    return render(request, 'post_ticket.html', {
+        'form': form,
+        'tipos_software': tipos_software,
+        'tipos_hardware': tipos_hardware
+    })
+
+
+def generar_pdf_xhtml2pdf(request):
+    # Datos para la plantilla
+    context = {
+        'titulo': 'Reporte de Ejemplo',
+        'contenido': 'Este es un reporte generado con xhtml2pdf.',
+    }
+
+    # Renderizar la plantilla HTML
+    html = render_to_string('reporte.html', context)
+
+    # Crear el archivo PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="reporte.pdf"'
+    pisa.CreatePDF(html, dest=response)
+
+    return response

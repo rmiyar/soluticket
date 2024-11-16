@@ -64,43 +64,17 @@
     <div id="software-options" class="ticket-options shadowed-container">
         <h3>Tipos de Tickets - Software</h3>
         <div class="row">
-            <!-- Listado de tipos de tickets para software -->
+            {% for tipo in tipos_software %}
             <div class="col-md-6 col-lg-4 my-2">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Instalación de Software</h5>
-                        <p class="card-text">Asistencia para instalar nuevos programas en su sistema.</p>
-                        <button class="create-ticket-btn" onclick="openFormModal('Instalación de Software')">Crear Ticket</button>
+                        <h5 class="card-title">{{ tipo.name }}</h5>
+                        <p class="card-text">{{ tipo.description }}</p>
+                        <button class="create-ticket-btn" onclick="openFormModal('{{ tipo.name }}')">Crear Ticket</button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-4 my-2">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Actualización de Software</h5>
-                        <p class="card-text">Ayuda con actualizaciones de software y sistemas.</p>
-                        <button class="create-ticket-btn" onclick="openFormModal('Actualización de Software')">Crear Ticket</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-4 my-2">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Resolución de Errores</h5>
-                        <p class="card-text">Solución de errores y problemas técnicos de software.</p>
-                        <button class="create-ticket-btn" onclick="openFormModal('Resolución de Errores')">Crear Ticket</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-4 my-2">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Problemas de Conectividad</h5>
-                        <p class="card-text">Solución a problemas de conexión y acceso a redes.</p>
-                        <button class="create-ticket-btn" onclick="openFormModal('Problemas de Conectividad')">Crear Ticket</button>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 
@@ -108,47 +82,20 @@
     <div id="hardware-options" class="ticket-options shadowed-container">
         <h3>Tipos de Tickets - Hardware</h3>
         <div class="row">
-            <!-- Listado de tipos de tickets para hardware -->
+            {% for tipo in tipos_hardware %}
             <div class="col-md-6 col-lg-4 my-2">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Reparación de Computadora</h5>
-                        <p class="card-text">Diagnóstico y reparación de equipos de cómputo.</p>
-                        <button class="create-ticket-btn" onclick="openFormModal('Reparación de Computadora')">Crear Ticket</button>
+                        <h5 class="card-title">{{ tipo.name }}</h5>
+                        <p class="card-text">{{ tipo.description }}</p>
+                        <button class="create-ticket-btn" onclick="openFormModal('{{ tipo.name }}')">Crear Ticket</button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-4 my-2">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Mantenimiento de Equipos</h5>
-                        <p class="card-text">Mantenimiento preventivo y correctivo de hardware.</p>
-                        <button class="create-ticket-btn" onclick="openFormModal('Mantenimiento de Equipos')">Crear Ticket</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-4 my-2">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Reemplazo de Partes</h5>
-                        <p class="card-text">Sustitución de componentes defectuosos o desgastados.</p>
-                        <button class="create-ticket-btn" onclick="openFormModal('Reemplazo de Partes')">Crear Ticket</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-4 my-2">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Configuración de Impresoras</h5>
-                        <p class="card-text">Instalación y configuración de impresoras en red.</p>
-                        <button class="create-ticket-btn" onclick="openFormModal('Configuración de Impresoras')">Crear Ticket</button>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </div>
-
 
 <!-- Modal del Formulario -->
 <div class="modal fade" id="ticketFormModal" tabindex="-1" aria-labelledby="ticketFormModalLabel" aria-hidden="true">
