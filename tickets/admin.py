@@ -25,7 +25,7 @@ def generar_reporte_pdf(modeladmin, request, queryset):
         'tickets': tickets,  # Asegúrate de que contiene los datos correctos
     }
 
-    # Llamar a la función utilitaria para generar el PDF
+
     return generar_pdf(data, template_name='reporte.html')
 
 

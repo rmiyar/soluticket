@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Ticket,Type, Category
+from .models import Ticket,Type,Feedback
 from django.shortcuts import render
 from .forms import TicketForm,CommentForm,CrearTicketForm
 from django.urls import reverse
@@ -135,22 +135,30 @@ def crear_ticket(request):
         form = CrearTicketForm(request.POST)
         if form.is_valid():
             tipo_name = request.POST.get('tipo_ticket')  # Obtener el nombre del tipo desde el formulario
-            tipo = get_object_or_404(Type, name=tipo_name)  # Buscar el objeto Type correspondiente
-            
+            if not tipo_name:
+                messages.error(request, "Por favor, selecciona un tipo de ticket válido.")
+                return redirect('crear_ticket')
+
+            try:
+                tipo = Type.objects.get(name=tipo_name)  # Buscar el objeto Type correspondiente
+            except Type.DoesNotExist:
+                messages.error(request, "El tipo de ticket seleccionado no existe.")
+                return redirect('crear_ticket')
+
             ticket = form.save(commit=False)  # No guardar todavía
             ticket.servicio = tipo  # Asignar el objeto Type al campo 'servicio'
-            ticket.save()  # Guardar el ticket con el tipo asignado
-            
+            ticket.nombre_solicitante = request.user  # Asignar el usuario autenticado como dueño
+            ticket.save()  # Guardar el ticket con el usuario asignado
+
             messages.success(request, "El ticket se creó correctamente.")
-            return redirect('crear_ticket')
+            return redirect('ver_mis_tickets')  # Cambia a la vista que prefieras tras éxito
         else:
             messages.error(request, "Por favor, corrige los errores del formulario.")
     else:
         form = CrearTicketForm()
 
-    # Obtener los tipos de ticket por categoría
-    tipos_software = Type.objects.filter(category__name="Software")
-    tipos_hardware = Type.objects.filter(category__name="Hardware")
+    # Separar lógica para obtener tipos por categoría
+    tipos_software, tipos_hardware = obtener_tipos_por_categoria()
 
     return render(request, 'post_ticket.html', {
         'form': form,
@@ -158,6 +166,12 @@ def crear_ticket(request):
         'tipos_hardware': tipos_hardware
     })
 
+
+def obtener_tipos_por_categoria():
+    """Obtiene los tipos de ticket agrupados por categoría."""
+    tipos_software = Type.objects.filter(category__name="Software")
+    tipos_hardware = Type.objects.filter(category__name="Hardware")
+    return tipos_software, tipos_hardware
 
 def generar_pdf_xhtml2pdf(request):
     # Datos para la plantilla
@@ -175,3 +189,45 @@ def generar_pdf_xhtml2pdf(request):
     pisa.CreatePDF(html, dest=response)
 
     return response
+
+from django.views.generic import ListView
+from .models import Ticket
+
+class MisTicketsView( ListView):
+    model = Ticket
+    template_name = "mis_tickets.html"
+    context_object_name = "tickets"
+
+    def get_queryset(self):
+        # Filtrar tickets solo para el usuario autenticado
+        return Ticket.objects.filter(nombre_solicitante=self.request.user)
+    
+
+
+def dar_feedback(request):
+    if request.method == "POST":
+        ticket_id = request.POST.get('ticket_id')
+        satisfaccion = request.POST.get('satisfaccion')
+        comentarios = request.POST.get('comentarios')
+
+        # Validar si el ticket existe
+        ticket = get_object_or_404(Ticket, id=ticket_id)
+
+        # Verificar si ya existe un feedback para este ticket
+        if Feedback.objects.filter(ticket=ticket).exists():
+            messages.error(request, "Ya has enviado un feedback para este ticket.")
+            return redirect('ver_mis_tickets')
+
+        # Crear el feedback
+        try:
+            Feedback.objects.create(
+                ticket=ticket,
+                satisfaccion=int(satisfaccion),
+                comentarios=comentarios
+            )
+            messages.success(request, "Gracias por tu feedback.")
+        except Exception as e:
+            messages.error(request, f"Ocurrió un error al guardar tu feedback: {e}")
+            return redirect('mis_tickets')
+
+    return redirect('mis_tickets')

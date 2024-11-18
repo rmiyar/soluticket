@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Tickets{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Mis Tickets</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Servicio</th>
+                <th>Prioridad</th>
+                <th>Estado</th>
+                <th>Fecha de Creación</th>
+                <th>Agente Asignado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+                <tr>
+                    <td>{{ ticket.id }}</td>
+                    <td>{{ ticket.servicio }}</td>
+                    <td>{{ ticket.prioridad }}</td>
+                    <td>{{ ticket.estado }}</td>
+                    <td>{{ ticket.fecha_creacion }}</td>
+                    <td>
+                        {% if ticket.asignado_a %}
+                        {{ ticket.asignado_a.get_full_name|default:ticket.asignado_a.username }}
+                        {% else %}
+                            No asignado
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#feedbackModal" data-ticket-id="{{ ticket.id }}">
+                            Dar Feedback
+                        </button>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7">No tienes tickets registrados.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal de Feedback -->
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="feedbackModalLabel">Dar Feedback</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'dar_feedback' %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" name="ticket_id" id="ticketIdInput">
+                    <div class="mb-3">
+                        <label for="satisfaccion" class="form-label">¿Qué tan satisfecho estás con el servicio?</label>
+                        <select name="satisfaccion" id="satisfaccion" class="form-select" required>
+                            <option value="5">Muy satisfecho</option>
+                            <option value="4">Satisfecho</option>
+                            <option value="3">Neutral</option>
+                            <option value="2">Insatisfecho</option>
+                            <option value="1">Muy insatisfecho</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comentarios" class="form-label">Comentarios adicionales</label>
+                        <textarea name="comentarios" id="comentarios" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Enviar Feedback</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Manejar la asignación del ticket_id al modal
+    const feedbackModal = document.getElementById('feedbackModal');
+    feedbackModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;  // Botón que activó el modal
+        const ticketId = button.getAttribute('data-ticket-id');  // Obtener el ID del ticket
+        const ticketIdInput = feedbackModal.querySelector('#ticketIdInput');
+        ticketIdInput.value = ticketId;  // Asignar el ID del ticket al input oculto
+    });
+</script>
+{% endblock %}

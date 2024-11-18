@@ -21,9 +21,8 @@ class TicketForm(forms.ModelForm):
 class CrearTicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
-        fields = ['nombre_solicitante', 'prioridad', 'descripcion']  # Excluir 'estado'
+        fields = ['prioridad', 'descripcion']  # Excluir 'estado'
         labels = {
-            'nombre_solicitante': 'Nombre del Solicitante',
             'prioridad': 'Prioridad',
             'descripcion': 'Descripción',
         }

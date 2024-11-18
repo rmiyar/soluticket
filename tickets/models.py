@@ -31,7 +31,7 @@ class Ticket(models.Model):
         ('cerrado', 'Cerrado')
     ]
 
-    nombre_solicitante = models.CharField(max_length=100, verbose_name="Nombre del Solicitante")
+    nombre_solicitante = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tickets")
     servicio = models.ForeignKey('Type', on_delete=models.SET_NULL, null=True, related_name="tickets", verbose_name="Servicio")  # Cambio de 'type' a 'Type'
     descripcion = models.TextField(null=True, blank=True, verbose_name="Descripción del Ticket")
     prioridad = models.ForeignKey('Priority', on_delete=models.SET_NULL, null=True, related_name="tickets", verbose_name="Prioridad")
@@ -50,3 +50,28 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comentario de {self.user} en {self.ticket}"
+
+
+from django.db import models
+
+class Feedback(models.Model):
+    ticket = models.ForeignKey(
+        'Ticket',  # Relación con el modelo Ticket
+        on_delete=models.CASCADE,
+        related_name='feedbacks'
+    )
+    satisfaccion = models.IntegerField(
+        choices=[(i, f'{i} - {desc}') for i, desc in enumerate(
+            ['Muy insatisfecho', 'Insatisfecho', 'Neutral', 'Satisfecho', 'Muy satisfecho'], start=1
+        )],
+        verbose_name="Satisfacción"
+    )
+    comentarios = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Comentarios adicionales"
+    )
+    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+
+    def __str__(self):
+        return f"Feedback para Ticket #{self.ticket.id} - {self.get_satisfaccion_display()}"
