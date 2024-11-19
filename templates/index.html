@@ -88,7 +88,6 @@
             <ul class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
                     {% if is_cliente %}
-                    <!-- Botón Crear Ticket para clientes -->
                     <li class="nav-item ms-2">
                         <a class="nav-link btn-crear-ticket" href="/Tickets/crear-ticket/">Crear Ticket</a>
                     </li>
@@ -96,21 +95,17 @@
                         <a class="nav-link btn-ver-tickets" href="{% url 'ver_mis_tickets' %}">Ver Mis Tickets</a>
                     </li>
                     {% elif is_agente %}
-                    <!-- Botón Dashboard Agente -->
                     <li class="nav-item">
                         <a class="nav-link btn btn-primary text-white" href="{% url 'agente_dashboard' %}">Dashboard Agente</a>
                     </li>
-                    <!-- Botón Incidencias con margen -->
                     <li class="nav-item ms-2">
                         <a class="nav-link btn-ver-tickets" href="{% url 'consultar_tickets' %}">Incidencias</a>
                     </li>
                     {% endif %}
-                    <!-- Botón Cerrar Sesión -->
                     <li class="nav-item">
                         <a class="nav-link btn-cerrar-sesion" href="{% url 'account_logout' %}">Cerrar Sesión</a>
                     </li>
                 {% else %}
-                    <!-- Botones para usuarios no autenticados -->
                     <li class="nav-item">
                         <a class="nav-link btn-iniciar-sesion" href="{% url 'account_login' %}">Iniciar Sesión</a>
                     </li>
@@ -124,6 +119,11 @@
 
     <!-- Contenido principal -->
     <div class="container mt-4">
+        <!-- Logo centrado -->
+        <div class="text-center mb-5">
+            <img src="{% static 'img/logo.png' %}" alt="Logo Soluticket" class="img-fluid" style="max-width: 200px;">
+        </div>
+
         <!-- Sección Conócenos -->
         <div class="shadowed-container my-5">
             <section id="conocenos">
