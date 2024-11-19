@@ -33,9 +33,17 @@
                         {% endif %}
                     </td>
                     <td>
+                        {% if ticket.estado == 'cerrado' %}
+                        <!-- Botón habilitado -->
                         <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#feedbackModal" data-ticket-id="{{ ticket.id }}">
                             Dar Feedback
                         </button>
+                        {% else %}
+                        <!-- Botón deshabilitado -->
+                        <button class="btn btn-sm btn-secondary" disabled>
+                            Dar Feedback
+                        </button>
+                        {% endif %}
                     </td>
                 </tr>
             {% empty %}

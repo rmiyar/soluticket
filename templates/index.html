@@ -86,24 +86,31 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link btn-crear-ticket" href="/Tickets/crear-ticket/">Crear Ticket</a>
-                </li>
                 {% if user.is_authenticated %}
                     {% if is_cliente %}
-                    <li class="nav-item">
+                    <!-- Botón Crear Ticket para clientes -->
+                    <li class="nav-item ms-2">
+                        <a class="nav-link btn-crear-ticket" href="/Tickets/crear-ticket/">Crear Ticket</a>
+                    </li>
+                    <li class="nav-item ms-2">
                         <a class="nav-link btn-ver-tickets" href="{% url 'ver_mis_tickets' %}">Ver Mis Tickets</a>
                     </li>
-                    {% endif %}
-                    {% if is_agente %}
+                    {% elif is_agente %}
+                    <!-- Botón Dashboard Agente -->
                     <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-white" href="{% url 'agente_dashboard' %}" style="margin-left: 10px;">Dashboard Agente</a>
+                        <a class="nav-link btn btn-primary text-white" href="{% url 'agente_dashboard' %}">Dashboard Agente</a>
+                    </li>
+                    <!-- Botón Incidencias con margen -->
+                    <li class="nav-item ms-2">
+                        <a class="nav-link btn-ver-tickets" href="{% url 'consultar_tickets' %}">Incidencias</a>
                     </li>
                     {% endif %}
+                    <!-- Botón Cerrar Sesión -->
                     <li class="nav-item">
                         <a class="nav-link btn-cerrar-sesion" href="{% url 'account_logout' %}">Cerrar Sesión</a>
                     </li>
                 {% else %}
+                    <!-- Botones para usuarios no autenticados -->
                     <li class="nav-item">
                         <a class="nav-link btn-iniciar-sesion" href="{% url 'account_login' %}">Iniciar Sesión</a>
                     </li>

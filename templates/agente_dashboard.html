@@ -9,45 +9,38 @@
     <h1 class="mb-4">Dashboard de Agente</h1>
     <div class="row">
         <!-- Total Tickets -->
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Total de Tickets Asignados</h5>
-                    <p class="card-text display-4">{{ total_tickets }}</p>
+        <div class="row">
+            <!-- Total Tickets -->
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Total de Tickets Asignados</h5>
+                        <p class="card-text display-4">{{ total_tickets }}</p>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Tickets en Proceso -->
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Tickets en Proceso</h5>
+                        <p class="card-text display-4">{{ en_proceso.count }}</p>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Tickets Cerrados -->
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Tickets Cerrados</h5>
+                        <p class="card-text display-4">{{ cerrados.count }}</p>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- Tickets Abiertos -->
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Tickets Abiertos</h5>
-                    <p class="card-text display-4">{{ abiertos.count }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tickets en Proceso -->
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Tickets en Proceso</h5>
-                    <p class="card-text display-4">{{ en_proceso.count }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tickets Cerrados -->
-        <div class="col-md-4 mt-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Tickets Cerrados</h5>
-                    <p class="card-text display-4">{{ cerrados.count }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
+        
 
     <!-- Nueva Sección: Gestión de Ticket -->
     <div class="mt-5">

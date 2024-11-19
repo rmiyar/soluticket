@@ -1,9 +1,10 @@
 from django.contrib import admin
-from .models import Ticket, Type, Priority, Comment
+from .models import Ticket, Type, Priority, Comment,Feedback
 from django.http import HttpResponse
 from utils.reporting import generar_pdf
 
-# Acción personalizada para generar reporte en PDF@admin.action(description="Generar reporte en PDF")
+
+
 @admin.action(description="Generar reporte en PDF")
 def generar_reporte_pdf(modeladmin, request, queryset):
     """
@@ -34,13 +35,20 @@ class CommentInline(admin.TabularInline):
     extra = 1  # Número de comentarios adicionales en blanco
     readonly_fields = ('user', 'content', 'created_at')  # Hacer los campos solo de lectura
 
+
+class FeedbackInline(admin.TabularInline):
+    model = Feedback
+    extra = 0  # No mostrar filas en blanco adicionales
+    readonly_fields = ('satisfaccion', 'comentarios', 'fecha_creacion')  # Solo lectura
+    can_delete = False  # Evitar que se borren desde el Inline   
+
 # Admin del modelo Ticket
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
     list_display = ('id', 'nombre_solicitante', 'servicio', 'prioridad', 'estado', 'fecha_creacion')
     list_filter = ('prioridad', 'estado', 'servicio')
     search_fields = ('nombre_solicitante', 'servicio__name', 'prioridad__level')
-    inlines = [CommentInline]  # Agregar los comentarios en línea en la página del ticket
+    inlines = [CommentInline, FeedbackInline]  # Agregar los comentarios en línea en la página del ticket
     actions = [generar_reporte_pdf]  # Registrar la acción personalizada
 
 # Admin del modelo Type
@@ -52,3 +60,5 @@ class TypeAdmin(admin.ModelAdmin):
 @admin.register(Priority)
 class PriorityAdmin(admin.ModelAdmin):
     list_display = ('level',)  # Ajusta esto según los campos de Priority
+
+

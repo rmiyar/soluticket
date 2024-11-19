@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Cerrar Sesión - Soluticket" %}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body text-center">
+                <h2 class="mb-4">{% trans "Cerrar Sesión" %}</h2>
+                <p>{% trans "¿Estás seguro de que deseas cerrar sesión?" %}</p>
+                <form method="post" action="{% url 'account_logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger w-50 mt-3">{% trans "Cerrar Sesión" %}</button>
+                </form>
+                <a href="/" class="btn btn-secondary w-50 mt-3">{% trans "Cancelar" %}</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
