@@ -82,9 +82,14 @@
                 </td>
                 <td>{{ ticket.fecha_creacion|date:"d/m/Y H:i" }}</td>
                 <td>
-                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal" data-ticket-id="{{ ticket.id }}">
-                        Tomar Ticket
-                    </button>
+                    <div class="d-flex flex-column gap-2">
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal" data-ticket-id="{{ ticket.id }}">
+                            Tomar Ticket
+                        </button>
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#descriptionModal" data-ticket-id="{{ ticket.id }}" data-ticket-description="{{ ticket.descripcion|default:'Sin descripción' }}">
+                            Ver Descripción
+                        </button>
+                    </div>
                 </td>
             </tr>
             {% empty %}
@@ -94,49 +99,77 @@
             {% endfor %}
         </tbody>
     </table>
-</div>
-
-<!-- Modal de confirmación -->
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmModalLabel">Confirmación</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                ¿Estás seguro de que deseas tomar este ticket?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="confirmAcceptButton">Aceptar</button>
+    
+    <!-- Modal para mostrar la descripción -->
+    <div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="descriptionModalLabel">Descripción del Ticket</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="ticketDescriptionContent">
+                    <!-- Aquí se mostrará la descripción -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Formulario oculto para enviar la solicitud de toma de ticket -->
-<form id="takeTicketForm" action="" method="post" style="display: none;">
-    {% csrf_token %}
-</form>
-
-{% block extra_scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var confirmModal = document.getElementById('confirmModal');
-        var confirmAcceptButton = document.getElementById('confirmAcceptButton');
-        var takeTicketForm = document.getElementById('takeTicketForm');
-
-        confirmModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget;
-            var ticketId = button.getAttribute('data-ticket-id');
-            takeTicketForm.action = `{% url 'tomar_ticket' 0 %}`.replace('/0/', `/${ticketId}/`);
+    
+    <!-- Modal para tomar ticket -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Confirmación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas tomar este ticket?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirmAcceptButton">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Formulario oculto para tomar ticket -->
+    <form id="takeTicketForm" action="" method="post" style="display: none;">
+        {% csrf_token %}
+    </form>
+    
+    {% block extra_scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Modal para tomar ticket
+            var confirmModal = document.getElementById('confirmModal');
+            var confirmAcceptButton = document.getElementById('confirmAcceptButton');
+            var takeTicketForm = document.getElementById('takeTicketForm');
+    
+            confirmModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var ticketId = button.getAttribute('data-ticket-id');
+                takeTicketForm.action = `{% url 'tomar_ticket' 0 %}`.replace('/0/', `/${ticketId}/`);
+            });
+    
+            confirmAcceptButton.addEventListener('click', function () {
+                takeTicketForm.submit();
+            });
+    
+            // Modal para mostrar descripción
+            var descriptionModal = document.getElementById('descriptionModal');
+            var descriptionContent = document.getElementById('ticketDescriptionContent');
+    
+            descriptionModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget; // Botón que activó el modal
+                var description = button.getAttribute('data-ticket-description'); // Obtener la descripción
+                descriptionContent.textContent = description ? description : "Sin descripción"; // Asignar al modal
+            });
         });
-
-        confirmAcceptButton.addEventListener('click', function () {
-            takeTicketForm.submit();
-        });
-    });
-</script>
-{% endblock %}
-{% endblock %}
+    </script>
+    {% endblock %}
+    {% endblock %}

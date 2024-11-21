@@ -228,6 +228,6 @@ def dar_feedback(request):
             messages.success(request, "Gracias por tu feedback.")
         except Exception as e:
             messages.error(request, f"Ocurrió un error al guardar tu feedback: {e}")
-            return redirect('mis_tickets')
+            return redirect('ver_mis_tickets')
 
     return redirect('mis_tickets')

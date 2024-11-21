@@ -165,7 +165,7 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = '/conocenos/'
 
 # Redirige a los usuarios a 'crear_ticket/' después de registrarse
-ACCOUNT_SIGNUP_REDIRECT_URL = '/Tickets/crear_ticket/'
+ACCOUNT_SIGNUP_REDIRECT_URL = '/conocenos/'
 
 # Opcionalmente, también puedes añadir la redirección al cerrar sesión
 LOGOUT_REDIRECT_URL = '/'
