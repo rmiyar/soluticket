@@ -231,3 +231,23 @@ def dar_feedback(request):
             return redirect('ver_mis_tickets')
 
     return redirect('mis_tickets')
+
+
+
+from django.http import JsonResponse
+from .models import Comment
+
+def obtener_comentarios(request, ticket_id):
+    try:
+        comentarios = Comment.objects.filter(ticket_id=ticket_id).select_related('user')
+        comentarios_json = [
+            {
+                "user": comentario.user.get_full_name() if comentario.user else None,
+                "content": comentario.content,
+                "created_at": comentario.created_at,
+            }
+            for comentario in comentarios
+        ]
+        return JsonResponse({"comments": comentarios_json})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)

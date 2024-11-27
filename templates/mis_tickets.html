@@ -5,8 +5,8 @@
 {% block content %}
 <div class="container mt-4">
     <h2>Mis Tickets</h2>
-    <table class="table table-striped">
-        <thead>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
             <tr>
                 <th>ID</th>
                 <th>Servicio</th>
@@ -23,26 +23,37 @@
                     <td>{{ ticket.id }}</td>
                     <td>{{ ticket.servicio }}</td>
                     <td>{{ ticket.prioridad }}</td>
-                    <td>{{ ticket.estado }}</td>
+                    <td>
+                        <span class="badge 
+                            {% if ticket.estado == 'abierto' %} bg-success
+                            {% elif ticket.estado == 'en_proceso' %} bg-warning text-dark
+                            {% else %} bg-danger
+                            {% endif %}">
+                            {{ ticket.estado|title }}
+                        </span>
+                    </td>
                     <td>{{ ticket.fecha_creacion }}</td>
                     <td>
                         {% if ticket.asignado_a %}
-                        {{ ticket.asignado_a.get_full_name|default:ticket.asignado_a.username }}
+                            {{ ticket.asignado_a.get_full_name|default:ticket.asignado_a.username }}
                         {% else %}
                             No asignado
                         {% endif %}
                     </td>
                     <td>
+                        <!-- Botón para ver comentarios -->
+                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#commentsModal{{ ticket.id }}">
+                            Ver Comentarios
+                        </button>
+                        <!-- Botón para dar feedback -->
                         {% if ticket.estado == 'cerrado' %}
-                        <!-- Botón habilitado -->
-                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#feedbackModal" data-ticket-id="{{ ticket.id }}">
-                            Dar Feedback
-                        </button>
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#feedbackModal{{ ticket.id }}">
+                                Dar Feedback
+                            </button>
                         {% else %}
-                        <!-- Botón deshabilitado -->
-                        <button class="btn btn-sm btn-secondary" disabled>
-                            Dar Feedback
-                        </button>
+                            <button class="btn btn-sm btn-secondary" disabled>
+                                Dar Feedback
+                            </button>
                         {% endif %}
                     </td>
                 </tr>
@@ -55,21 +66,54 @@
     </table>
 </div>
 
-<!-- Modal de Feedback -->
-<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+<!-- Modales -->
+{% for ticket in tickets %}
+<!-- Modal para comentarios -->
+<div class="modal fade" id="commentsModal{{ ticket.id }}" tabindex="-1" aria-labelledby="commentsModalLabel{{ ticket.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentsModalLabel{{ ticket.id }}">Comentarios del Ticket #{{ ticket.id }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% if ticket.comments.all %}
+                    {% for comment in ticket.comments.all %}
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    Por: {{ comment.user.get_full_name|default:'Usuario desconocido' }} - {{ comment.created_at|date:"d/m/Y H:i" }}
+                                </h6>
+                                <p class="card-text">{{ comment.content }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No hay comentarios para este ticket.</p>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para dar feedback -->
+<div class="modal fade" id="feedbackModal{{ ticket.id }}" tabindex="-1" aria-labelledby="feedbackModalLabel{{ ticket.id }}" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="feedbackModalLabel">Dar Feedback</h5>
+                <h5 class="modal-title" id="feedbackModalLabel{{ ticket.id }}">Dar Feedback para el Ticket #{{ ticket.id }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="{% url 'dar_feedback' %}" method="post">
                 {% csrf_token %}
                 <div class="modal-body">
-                    <input type="hidden" name="ticket_id" id="ticketIdInput">
+                    <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
                     <div class="mb-3">
-                        <label for="satisfaccion" class="form-label">¿Qué tan satisfecho estás con el servicio?</label>
-                        <select name="satisfaccion" id="satisfaccion" class="form-select" required>
+                        <label for="satisfaccion{{ ticket.id }}" class="form-label">¿Qué tan satisfecho estás con el servicio?</label>
+                        <select name="satisfaccion" id="satisfaccion{{ ticket.id }}" class="form-select" required>
                             <option value="5">Muy satisfecho</option>
                             <option value="4">Satisfecho</option>
                             <option value="3">Neutral</option>
@@ -78,8 +122,8 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="comentarios" class="form-label">Comentarios adicionales</label>
-                        <textarea name="comentarios" id="comentarios" class="form-control" rows="3"></textarea>
+                        <label for="comentarios{{ ticket.id }}" class="form-label">Comentarios adicionales</label>
+                        <textarea name="comentarios" id="comentarios{{ ticket.id }}" class="form-control" rows="3"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -90,15 +134,5 @@
         </div>
     </div>
 </div>
-
-<script>
-    // Manejar la asignación del ticket_id al modal
-    const feedbackModal = document.getElementById('feedbackModal');
-    feedbackModal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;  // Botón que activó el modal
-        const ticketId = button.getAttribute('data-ticket-id');  // Obtener el ID del ticket
-        const ticketIdInput = feedbackModal.querySelector('#ticketIdInput');
-        ticketIdInput.value = ticketId;  // Asignar el ID del ticket al input oculto
-    });
-</script>
+{% endfor %}
 {% endblock %}
